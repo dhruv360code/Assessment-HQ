@@ -32,11 +32,15 @@ const registerUser = async (req, res) => {
     }
 
     // encrypt userid into jwt token
-    const token = jwt.sign({ id: userData._id }, process.env.JWT_SECRET);
+    const token = jwt.sign(
+      { id: userData._id.toString() },
+      process.env.JWT_SECRET
+    );
     const data = {
       token,
       user: userData,
     };
+    console.log("ud", userData);
 
     const updateData = {
       find: { _id: userData._id },
