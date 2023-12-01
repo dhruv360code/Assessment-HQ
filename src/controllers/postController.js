@@ -40,7 +40,7 @@ const retrieveAllPostOfUsers = async (req, res) => {
 const retrievePostById = async (req, res) => {
   try {
     const data = {
-      postId: req.params.Id,
+      _id: req.params.Id,
     };
     const [err, posts] = await fetchOne("Post", data);
     if (err) {

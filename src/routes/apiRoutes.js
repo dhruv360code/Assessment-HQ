@@ -22,9 +22,9 @@ router.get("/logout", userValidate, logout);
 
 router.post("/createPost", userValidate, createPost);
 router.post("/retrieveAllPostOfUser", userValidate, retrieveAllPostOfUsers);
-router.get("/retrievePostById/Id", userValidate, retrievePostById);
+router.get("/retrievePostById/:Id", userValidate, retrievePostById);
 
 router.post("/createComment", userValidate, createComment);
-router.post("/getAllComments", userValidate, getAllComments);
+router.get("/getAllComments/:Id", userValidate, getAllComments);
 
 module.exports = router;
