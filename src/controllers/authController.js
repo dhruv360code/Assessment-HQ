@@ -38,6 +38,15 @@ const registerUser = async (req, res) => {
       user: userData,
     };
 
+    const updateData = {
+      find: { _id: userData._id },
+      update: { token: token },
+    };
+    const [userErr, user] = await update("User", updateData);
+    if (!user || userErr) {
+      return serverErrorResponse(res, "Server Error");
+    }
+
     return successResponse(res, data, "User Registered Successfully!!!");
   } catch (error) {
     return serverErrorResponse(res, error, "Error in creating user");
@@ -51,19 +60,28 @@ const loginUser = async (req, res) => {
     if (joiError.error) {
       return serverErrorResponse(res, joiError.error.details[0].message);
     }
-    const user = await fetchOne("User", { email: email }, (err, user) => {
-      if (err) {
-        return serverErrorResponse(res, err, "Server Error");
-      }
-      if (!user || user.length == 0) {
-        return badRequestResponse(res, "User Not Found");
-      }
-    });
+    const [err, user] = await fetchOne("User", { email: email });
+    if (err) {
+      return serverErrorResponse(res, err, "Server Error");
+    }
+    if (!user || user.length == 0) {
+      return badRequestResponse(res, "User Not Found");
+    }
+    console.log(user);
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return badRequestResponse(res, "Invalid Credentials");
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET);
+
+    const updateData = {
+      find: { _id: user._id },
+      update: { token: token },
+    };
+    const [userErr, updatedUser] = await update("User", updateData);
+    if (!user || userErr) {
+      return serverErrorResponse(res, "Server Error");
+    }
     return successResponse(res, { token: token }, "User Login Successfull");
   } catch (error) {
     return serverErrorResponse(res, "Error in Login User");

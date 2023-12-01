@@ -7,8 +7,6 @@ require("./database/mongoDb");
 const PORT = 3000;
 console.log("PORT", process.env.PORT);
 
-const os = require("os");
-
 process.on("uncaughtException", (err) => {
   console.log("Caught exception: " + err);
   mongoose.connection.close();

@@ -1,6 +1,10 @@
 const router = require("express").Router();
 
-const { updateUser, fetchUserById } = require("../controllers/userController");
+const {
+  updateUser,
+  fetchUserById,
+  logout,
+} = require("../controllers/userController");
 const {
   createPost,
   retrieveAllPostOfUsers,
@@ -12,14 +16,15 @@ const {
 } = require("../controllers/commentsController");
 const { userValidate } = require("../middlewares/validation");
 
-router.put("/updateUser", userValidate, updateUser);
+router.post("/updateUser", userValidate, updateUser);
 router.get("/getUser", userValidate, fetchUserById);
+router.get("/logout", userValidate, logout);
 
 router.post("/createPost", userValidate, createPost);
-router.get("/retrieveAllPostOfUsers", userValidate, retrieveAllPostOfUsers);
+router.post("/retrieveAllPostOfUser", userValidate, retrieveAllPostOfUsers);
 router.get("/retrievePostById", userValidate, retrievePostById);
 
 router.post("/createComment", userValidate, createComment);
-router.get("/getAllComments/:Id", userValidate, getAllComments);
+router.post("/getAllComments", userValidate, getAllComments);
 
 module.exports = router;

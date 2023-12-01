@@ -6,14 +6,9 @@ const {
   badRequestResponse,
 } = require("../utils/response");
 const { update, fetchOne } = require("../repository/commonRepo");
-const { userUpdateJoi } = require("../joi/user.joi");
 
 const updateUser = async (req, res) => {
   try {
-    const joiError = userUpdateJoi.validate(req.body);
-    if (joiError.error) {
-      return serverErrorResponse(res, joiError.error.details[0].message);
-    }
     const data = {
       find: { _id: new mongoose.Types.ObjectId(req.userId) },
       update: req.body,
@@ -46,7 +41,24 @@ const fetchUserById = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  try {
+    const updateData = {
+      find: { _id: new mongoose.Types.ObjectId(req.userId) },
+      update: { $unset: { token: 1 } },
+    };
+    const [userErr, user] = await update("User", updateData);
+    if (!user || userErr) {
+      return serverErrorResponse(res, "Server Error");
+    }
+    return successResponse(res, {}, "Logout Successful");
+  } catch (error) {
+    return serverErrorResponse(res, error.message);
+  }
+};
+
 module.exports = {
   updateUser,
   fetchUserById,
+  logout,
 };
